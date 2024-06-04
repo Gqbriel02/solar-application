@@ -1,0 +1,23 @@
+.container {
+    position: relative;
+    background: white;
+    border: 1px solid black;
+    padding: 32px;
+    border-radius: 8px;
+    max-width: 900px;
+    max-height: 900px;
+    margin: auto;
+}
+
+.steps {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.buttons {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
