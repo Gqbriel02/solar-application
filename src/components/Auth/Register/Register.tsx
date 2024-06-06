@@ -9,9 +9,11 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { ChangeEvent, useState } from 'react';
-import { signUp } from '../../../services/AuthService';
-import { useNavigate } from "react-router-dom";
+import {ChangeEvent, useState} from 'react';
+import {signUp} from '../../../services/AuthService';
+import {useNavigate} from "react-router-dom";
+import {doc, setDoc} from "firebase/firestore";
+import {auth, db} from '../../../config/Firebase';
 
 function Copyright(props: any) {
     return (
@@ -27,7 +29,7 @@ function Copyright(props: any) {
 }
 
 function Register() {
-    const [userCredentials, setUserCredentials] = useState<{[key: string]: string}>({});
+    const [userCredentials, setUserCredentials] = useState<{ [key: string]: string }>({});
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -38,7 +40,7 @@ function Register() {
 
     async function handleRegister(e: any): Promise<void> {
         e.preventDefault();
-        const { firstName, lastName, email, password, confirmPassword } = userCredentials;
+        const {firstName, lastName, email, password, confirmPassword} = userCredentials;
         if (!firstName) {
             setError("Please enter your first name.");
             return;
@@ -63,18 +65,29 @@ function Register() {
             setError("Passwords don't match.");
             return;
         }
-
+        
         try {
             await signUp(userCredentials, setError);
-            navigate('/login');
+            const user = auth.currentUser;
+            if (user) {
+                await setDoc(doc(db, "users", user.uid), {
+                    firstName,
+                    lastName,
+                    email
+                });
+                navigate('/login');
+            } else {
+                setError('Failed to get the current user after registration.');
+            }
         } catch (error) {
             console.log(error);
+            setError('Failed to register. Please try again.');
         }
     }
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
+            <CssBaseline/>
             <Box
                 sx={{
                     marginTop: 8,
@@ -83,13 +96,13 @@ function Register() {
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
+                <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                    <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
-                <Box component="form" noValidate onSubmit={handleRegister} sx={{ mt: 3 }}>
+                <Box component="form" noValidate onSubmit={handleRegister} sx={{mt: 3}}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -156,7 +169,7 @@ function Register() {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
+                        sx={{mt: 3, mb: 2}}
                     >
                         Sign Up
                     </Button>
@@ -164,7 +177,7 @@ function Register() {
 
                     {
                         error &&
-                        <div  className="error">
+                        <div className="error">
                             {error}
                         </div>
                     }
@@ -178,7 +191,7 @@ function Register() {
                     </Grid>
                 </Box>
             </Box>
-            <Copyright sx={{ mt: 5 }} />
+            <Copyright sx={{mt: 5}}/>
         </Container>
     );
 }
