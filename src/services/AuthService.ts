@@ -1,22 +1,22 @@
-import { onAuthStateChanged,
+import {
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
-    createUserWithEmailAndPassword } from 'firebase/auth';
-import { ChangeEvent } from 'react';
-import { auth } from '../config/Firebase';
+    createUserWithEmailAndPassword
+} from 'firebase/auth';
+import {auth} from '../config/Firebase';
 
 
 export async function signIn(email: string, password: string, setError: (error: string) => void, setIsAuthenticated: (authenticated: boolean) => void): Promise<void> {
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log(userCredential.user);
-            /*await signInWithEmailAndPassword(auth, email, password);*/
-            setIsAuthenticated(true);
-            return Promise.resolve();
-        } catch (error) {
-            /*console.log("EROAREAAA: ", error);*/
-            return Promise.reject();
-        }
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log(userCredential.user);
+        /*await signInWithEmailAndPassword(auth, email, password);*/
+        setIsAuthenticated(true);
+        return Promise.resolve();
+    } catch (error) {
+        /*console.log("EROAREAAA: ", error);*/
+        return Promise.reject();
+    }
 }
 
 export function signUp(userCredentials: { [key: string]: string }, setError: (error: string) => void): Promise<void> {
