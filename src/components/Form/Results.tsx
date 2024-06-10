@@ -5,9 +5,12 @@ import {FormWrapper} from "./FormWrapper";
 import {googleMapsKey} from '../../config/ApiKeys';
 import axios from "axios";
 
-type ResultsProps = FormData & { reset: boolean };
+type ResultsProps = FormData & {
+    reset: boolean;
+    onResultsFetched: (results: PvwattsResponse, location: string) => void;
+};
 
-const monthNames = [
+const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
@@ -22,6 +25,7 @@ function Results({
                      tilt,
                      azimuth,
                      reset,
+                     onResultsFetched
                  }: ResultsProps) {
     const [results, setResults] = useState<PvwattsResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -29,7 +33,29 @@ function Results({
     const [city, setCity] = useState<string>('');
 
     useEffect(() => {
-        const fetchResults = async () => {
+        const fetchCityName = async (): Promise<string | undefined> => {
+            try {
+                const response = await axios.get(
+                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsKey}`
+                );
+                const results = response.data.results;
+                if (results.length > 0) {
+                    const addressComponents = results[0].address_components;
+                    const cityComponent = addressComponents.find((component: { types: string[], long_name: string }) =>
+                        component.types.includes('locality')
+                    );
+                    if (cityComponent) {
+                        return cityComponent.long_name;  // Return the city name
+                    } else {
+                        return results[0].formatted_address;  // Or the formatted address
+                    }
+                }
+            } catch (err) {
+                return 'Unknown';  // Default if an error occurs
+            }
+        };
+
+        const fetchResults = async (city: string): Promise<void> => {
             setLoading(true);
             setError(null);
             try {
@@ -44,6 +70,7 @@ function Results({
                     lon: lng,
                 });
                 setResults(data);
+                onResultsFetched(data, city);
             } catch (err) {
                 setError('Error fetching data from PVWatts API');
             } finally {
@@ -51,30 +78,15 @@ function Results({
             }
         };
 
-        const fetchCityName = async () => {
-            try {
-                const response = await axios.get(
-                    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${googleMapsKey}`
-                );
-                const results = response.data.results;
-                if (results.length > 0) {
-                    const addressComponents = results[0].address_components;
-                    const cityComponent = addressComponents.find((component: any) =>
-                        component.types.includes('locality')
-                    );
-                    if (cityComponent) {
-                        setCity(cityComponent.long_name);
-                    } else {
-                        setCity(results[0].formatted_address);
-                    }
-                }
-            } catch (err) {
-                setCity('Unknown');
-            }
-        };
+        async function initialize() {
+            const cityName = await fetchCityName();  // Wait for city name
+            setCity(cityName || "Unknown");  // Update state with the city name
+            fetchResults(cityName || "Unknown");  // Then fetch the results
+        }
 
-        fetchResults();
-        fetchCityName();
+        if (reset) {  // Check if reset is true to re-fetch on reset
+            initialize();
+        }
     }, [lat, lng, dcSystemSize, moduleType, arrayType, systemLosses, tilt, azimuth, reset]);
 
     if (loading) return <div>Loading...</div>;
@@ -95,7 +107,7 @@ function Results({
                         <tbody>
                         {results.outputs.solrad_monthly.map((solrad: number, index: number) => (
                             <tr key={index}>
-                                <td>{monthNames[index]}</td>
+                                <td>{months[index]}</td>
                                 <td>{solrad.toFixed(2)}</td>
                                 <td>{results.outputs.ac_monthly[index].toFixed(0)}</td>
                             </tr>

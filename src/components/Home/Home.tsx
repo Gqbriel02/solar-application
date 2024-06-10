@@ -4,6 +4,10 @@ import {useMultistepForm} from "../Form/useMultistepForm";
 import MapComponent from "../GoogleMap/MapComponent";
 import SystemInfo from "../Form/SystemInfo";
 import Results from "../Form/Results";
+import {db, auth} from "../../config/Firebase";
+import {collection, addDoc} from "firebase/firestore";
+import {useAuthState} from 'react-firebase-hooks/auth';
+import {PvwattsResponse} from '../../services/PVWattsService';
 
 export type FormData = {
     lat: number;
@@ -31,6 +35,9 @@ function Home() {
     const [data, setData] = useState(INITIAL_DATA);
     const [markerPosition, setMarkerPosition] = useState({lat: 0, lng: 0});
     const [reset, setReset] = useState(false);
+    const [results, setResults] = useState<PvwattsResponse | null>(null);
+    const [location, setLocation] = useState<string>('');
+    const [user] = useAuthState(auth);
 
     function updateFields(fields: Partial<FormData>) {
         setData(prev => {
@@ -43,18 +50,58 @@ function Home() {
         updateFields({lat: position.lat, lng: position.lng});
     }
 
+    function handleResultsFetched(results: PvwattsResponse, location: string) {
+        setResults(results);
+        setLocation(location);
+    }
+
     const {steps, currentStepIndex, step, isFirstStep, isLastStep, back, next, goTo} =
         useMultistepForm([
             <MapComponent {...data} updateFields={updateFields} updateMarkerPosition={updateMarkerPosition}/>,
             <SystemInfo {...data} updateFields={updateFields}/>,
-            <Results {...data} reset={reset}/>,
+            <Results {...data} reset={reset} onResultsFetched={handleResultsFetched}/>,
         ]);
 
-    function onSubmit(e: FormEvent) {
+    async function onSubmit(e: FormEvent) {
         e.preventDefault();
         if (!isLastStep) return next();
-        alert("Successfully finished");
+        /*console.log("User:", user);
+        console.log("Results:", results);*/
+        if (isLastStep && user && results) {
+            try {
+                const solarCollectionRef = collection(db, 'solarData');
+                await addDoc(solarCollectionRef, {
+                    userId: user.uid,
+                    inputs: {
+                        array_type: data.arrayType,
+                        azimuth: data.azimuth,
+                        lat: data.lat,
+                        lon: data.lng,
+                        losses: data.systemLosses,
+                        module_type: data.moduleType,
+                        system_capacity: data.dcSystemSize,
+                        tilt: data.tilt
+                    },
+                    outputs: {
+                        ac_annual: results.outputs.ac_annual,
+                        ac_monthly: results.outputs.ac_monthly,
+                        capacity_factor: results.outputs.capacity_factor,
+                        dc_monthly: results.outputs.dc_monthly,
+                        poa_monthly: results.outputs.poa_monthly,
+                        solrad_annual: results.outputs.solrad_annual,
+                        solrad_monthly: results.outputs.solrad_monthly,
+                    },
+                    station_info: results.station_info,
+                    location: `${location} (${data.lat}, ${data.lng})`
+                });
+                alert("Data saved successfully");
+            } catch (err) {
+                console.error("Error adding document: ", err);
+                alert("Error saving data");
+            }
+        }
     }
+
 
     function resetForm() {
         setData(INITIAL_DATA);

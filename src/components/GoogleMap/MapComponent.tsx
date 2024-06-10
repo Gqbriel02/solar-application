@@ -21,12 +21,12 @@ const MapComponent: React.FC<MapDataProps> = ({lat, lng, updateFields, updateMar
     });
 
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
-        console.log("Map clicked:", event.latLng);
+        /*console.log("Map clicked:", event.latLng);*/
         if (event.latLng) {
             const lat = event.latLng.lat();
             const lng = event.latLng.lng();
-            console.log("Latitude: ", lat);
-            console.log("Longitude: ", lng);
+            /*  console.log("Latitude: ", lat);
+                console.log("Longitude: ", lng);*/
             updateMarkerPosition({lat, lng});
             updateFields({lat, lng});
         }
