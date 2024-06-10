@@ -1,0 +1,111 @@
+.backButton {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.backButton:hover {
+    background-color: #0056b3;
+}
+
+.detailedReport {
+    padding: 30px;
+}
+
+.container {
+    margin-bottom: 50px;
+}
+
+.systemTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+}
+
+.systemTable th,
+.systemTable td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.systemTable th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.systemTable tr {
+    background-color: #f9f9f9;
+}
+
+.systemTable tr:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+.systemTable tr:hover {
+    background-color: #f1f9f9;
+}
+
+.acChart, .solarRadiationChart, .poaChart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.chartContainer {
+    flex: 0 0 80%;
+}
+
+.acAnnualCard, .solarAnnualCard, .poaAnnualCard {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.acAnnualCard h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #343a40;
+}
+
+.acAnnualCard p {
+    margin: 10px 0 0;
+    font-size: 24px;
+    color: #8884d8;
+}
+
+.solarAnnualCard h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #343a40;
+}
+
+.solarAnnualCard p {
+    margin: 10px 0 0;
+    font-size: 24px;
+    color: #ffc658;
+}
+
+.poaAnnualCard h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #343a40;
+}
+
+.poaAnnualCard p {
+    margin: 10px 0 0;
+    font-size: 24px;
+    color: #8884d8;
+}
