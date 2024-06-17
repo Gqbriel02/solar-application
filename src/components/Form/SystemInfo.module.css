@@ -12,20 +12,27 @@
 .body {
     display: grid;
     gap: 16px 8px;
-    grid-template-rows: auto;
-    grid-template-columns: auto minmax(auto, 400px);
+    grid-template-columns: 1fr;
     width: 100%;
 }
 
 .input-group {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
 .label {
-    flex: 1;
+    margin-bottom: 8px;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
 }
 
 .input {
-    flex: 2;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
 }

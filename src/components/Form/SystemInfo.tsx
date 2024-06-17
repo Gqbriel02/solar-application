@@ -1,6 +1,7 @@
-import React from "react";
+import React, {forwardRef, useImperativeHandle, useState} from "react";
 import {FormWrapper} from "./FormWrapper";
 import styles from './SystemInfo.module.css';
+import Error from '../Error/Error';
 
 type SystemData = {
     dcSystemSize: number
@@ -15,24 +16,67 @@ type SystemDataProps = SystemData & {
     updateFields: (fields: Partial<SystemData>) => void
 }
 
-function SystemInfo({
-                        dcSystemSize,
-                        moduleType,
-                        arrayType,
-                        systemLosses,
-                        tilt,
-                        azimuth,
-                        updateFields
-                    }: SystemDataProps) {
+const SystemInfo = forwardRef(({
+                                   dcSystemSize,
+                                   moduleType,
+                                   arrayType,
+                                   systemLosses,
+                                   tilt,
+                                   azimuth,
+                                   updateFields,
+                               }: SystemDataProps, ref) => {
+
+    const [errors, setErrors] = useState<{ [key: string]: string | null }>({
+        dcSystemSize: null,
+        systemLosses: null,
+        tilt: null,
+        azimuth: null
+    });
+
+    useImperativeHandle(ref, () => ({
+        validate: () => {
+            const newErrors: { [key: string]: string | null } = {
+                dcSystemSize: null,
+                systemLosses: null,
+                tilt: null,
+                azimuth: null
+            };
+            let valid = true;
+
+            if (dcSystemSize < 1 || dcSystemSize > 50) {
+                newErrors.dcSystemSize = "Insert a value between 1 and 50 kW";
+                valid = false;
+            }
+
+            if (systemLosses < 0 || systemLosses > 100) {
+                newErrors.systemLosses = "Insert a value between 0 and 100. Usually, the system losses are between 14% and 20%";
+                valid = false;
+            }
+
+            if (tilt < 0 || tilt > 90) {
+                newErrors.tilt = "Insert a value between 0 and 90";
+                valid = false;
+            }
+
+            if (azimuth < 0 || azimuth > 360) {
+                newErrors.azimuth = "Insert a value between 0 and 360";
+                valid = false;
+            }
+
+            setErrors(newErrors);
+            return valid;
+        }
+    }));
 
     return (
         <FormWrapper title={"System Info"}>
             <div className={styles['subheader']}>Modify the inputs below to run the simulation:</div>
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="dcSystemSize">DC System Size (kW):</label>
-                <input className={styles['input']} type="number" id="dcSystemSize" name="dcSystemSize" step="0.01"
-                       min="0.05" max="500000" value={dcSystemSize}
+                <input className={styles['input']} type="number" id="dcSystemSize" name="dcSystemSize"
+                       value={dcSystemSize}
                        onChange={e => updateFields({dcSystemSize: parseInt(e.target.value)})}/>
+                {errors.dcSystemSize && <Error errorMessage={errors.dcSystemSize}/>}
             </div>
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="moduleType">Module Type:</label>
@@ -56,24 +100,25 @@ function SystemInfo({
             </div>
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="systemLosses">System Losses (%):</label>
-                <input className={styles['input']} type="number" id="systemLosses" name="systemLosses" step="0.01"
-                       min="0" max="90" value={systemLosses}
+                <input className={styles['input']} type="number" id="systemLosses" name="systemLosses"
+                       value={systemLosses}
                        onChange={e => updateFields({systemLosses: parseFloat(e.target.value)})}/>
+                {errors.systemLosses && <Error errorMessage={errors.systemLosses}/>}
             </div>
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="tilt">Tilt (deg):</label>
-                <input className={styles['input']} type="number" id="tilt" name="tilt" step="0.01" min="0" max="90"
-                       value={tilt}
+                <input className={styles['input']} type="number" id="tilt" name="tilt" value={tilt}
                        onChange={e => updateFields({tilt: parseFloat(e.target.value)})}/>
+                {errors.tilt && <Error errorMessage={errors.tilt}/>}
             </div>
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="azimuth">Azimuth (deg):</label>
-                <input className={styles['input']} type="number" id="azimuth" name="azimuth" step="0.01" min="0"
-                       max="360" value={azimuth}
+                <input className={styles['input']} type="number" id="azimuth" name="azimuth" value={azimuth}
                        onChange={e => updateFields({azimuth: parseFloat(e.target.value)})}/>
+                {errors.azimuth && <Error errorMessage={errors.azimuth}/>}
             </div>
         </FormWrapper>
     );
-}
+});
 
 export default SystemInfo;
