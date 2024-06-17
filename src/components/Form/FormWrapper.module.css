@@ -6,25 +6,4 @@
 .subheader {
     text-align: center;
     margin-bottom: 16px;
-    /*grid-column: 1 / -1;*/
-}
-
-.body {
-    display: grid;
-    gap: 16px 8px;
-    grid-template-columns: auto minmax(auto, 400px);
-    width: 100%;
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-}
-
-.label {
-    flex: 1;
-}
-
-.input {
-    flex: 2;
 }
