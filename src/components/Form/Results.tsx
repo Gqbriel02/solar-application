@@ -4,6 +4,9 @@ import {FormData} from '../Home/Home';
 import {FormWrapper} from "./FormWrapper";
 import {googleMapsKey} from '../../config/ApiKeys';
 import axios from "axios";
+import styles from './Results.module.css';
+import Loading from '../Loading/Loading';
+import Error from '../Error/Error';
 
 type ResultsProps = FormData & {
     reset: boolean;
@@ -45,13 +48,13 @@ function Results({
                         component.types.includes('locality')
                     );
                     if (cityComponent) {
-                        return cityComponent.long_name;  // Return the city name
+                        return cityComponent.long_name;
                     } else {
-                        return results[0].formatted_address;  // Or the formatted address
+                        return results[0].formatted_address;
                     }
                 }
             } catch (err) {
-                return 'Unknown';  // Default if an error occurs
+                return 'Unknown';
             }
         };
 
@@ -79,24 +82,22 @@ function Results({
         };
 
         async function initialize() {
-            const cityName = await fetchCityName();  // Wait for city name
-            setCity(cityName || "Unknown");  // Update state with the city name
-            fetchResults(cityName || "Unknown");  // Then fetch the results
+            const cityName = await fetchCityName();
+            setCity(cityName || "Unknown");
+            fetchResults(cityName || "Unknown");
         }
 
-        if (reset) {  // Check if reset is true to re-fetch on reset
-            initialize();
-        }
+        initialize();
     }, [lat, lng, dcSystemSize, moduleType, arrayType, systemLosses, tilt, azimuth, reset]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <Loading/>;
+    if (error) return <Error errorMessage={error}/>
 
     return (
         <FormWrapper title={`Results for ${city} (${lat}, ${lng})`}>
             {results && (
                 <>
-                    <table>
+                    <table className={styles.resultsTable}>
                         <thead>
                         <tr>
                             <th>Month</th>
@@ -112,7 +113,7 @@ function Results({
                                 <td>{results.outputs.ac_monthly[index].toFixed(0)}</td>
                             </tr>
                         ))}
-                        <tr>
+                        <tr className={styles.annualRow}>
                             <td>Annual</td>
                             <td>{results.outputs.solrad_annual.toFixed(2)}</td>
                             <td>{results.outputs.ac_annual.toFixed(0)}</td>
