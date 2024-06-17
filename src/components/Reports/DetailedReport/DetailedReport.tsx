@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
-import {doc, getDoc} from 'firebase/firestore';
+import {doc, getDoc, deleteDoc} from 'firebase/firestore';
 import {db} from '../../../config/Firebase';
 import styles from './DetailedReport.module.css';
 import {
@@ -15,6 +15,8 @@ import {
     BarChart,
     Bar
 } from 'recharts';
+import Loading from '../../Loading/Loading';
+import Error from '../../Error/Error';
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "June",
     "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -75,6 +77,7 @@ const DetailedReport = () => {
     const [solarData, setSolarData] = useState<DetailedSolarData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchSolarData = async () => {
@@ -102,8 +105,8 @@ const DetailedReport = () => {
         fetchSolarData();
     }, [id]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (loading) return <Loading/>;
+    if (error) return <Error errorMessage={error}/>;
 
     const chartData = solarData?.outputs.ac_monthly.map((ac, index) => ({
         month: months[index],
@@ -122,16 +125,32 @@ const DetailedReport = () => {
         POA: poa
     }));
 
+    const handleDelete = async () => {
+        if (!id) return;
+
+        try {
+            await deleteDoc(doc(db, 'solarData', id));
+            alert("Report deleted successfully");
+            navigate('/reports');
+        } catch (err) {
+            console.error("Error deleting document: ", err);
+            alert("Error deleting report");
+        }
+    };
+
     return (
-        <div className={styles.detailedReport}>
-            <button className={styles.backButton} onClick={() => navigate('/reports')}>Back</button>
+        <div className={styles['detailedReport']}>
+            <div className={styles['buttonContainer']}>
+                <button className={styles['backButton']} onClick={() => navigate('/reports')}>Back</button>
+                <button className={styles['deleteButton']} onClick={() => setIsModalOpen(true)}>Delete</button>
+            </div>
             <div>
                 {solarData && (
                     <>
-                        <h2 className={styles.location}>The solar data for this location
+                        <h2 className={styles['location']}>The solar data for this location
                             -{'>'} {solarData.location} </h2>
 
-                        <div className={styles.container}>
+                        <div className={styles['container']}>
                             <h3>System Characteristics</h3>
                             <table className={styles.systemTable}>
                                 <tbody>
@@ -167,8 +186,8 @@ const DetailedReport = () => {
                             </table>
                         </div>
 
-                        <div className={styles.acChart}>
-                            <div className={styles.chartContainer}>
+                        <div className={styles['acChart']}>
+                            <div className={styles['chartContainer']}>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <LineChart data={chartData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
                                         <CartesianGrid strokeDasharray="3 3"/>
@@ -181,14 +200,14 @@ const DetailedReport = () => {
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>
-                            <div className={styles.acAnnualCard}>
+                            <div className={styles['acAnnualCard']}>
                                 <h3>Annual Alternating Current Output</h3>
                                 <p>{solarData.outputs.ac_annual.toFixed(2)} kWh</p>
                             </div>
                         </div>
 
-                        <div className={styles.solarRadiationChart}>
-                            <div className={styles.chartContainer}>
+                        <div className={styles['solarRadiationChart']}>
+                            <div className={styles['chartContainer']}>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <BarChart data={solarRadiationData}
                                               margin={{top: 5, right: 30, left: 20, bottom: 5}}>
@@ -201,13 +220,13 @@ const DetailedReport = () => {
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
-                            <div className={styles.solarAnnualCard}>
+                            <div className={styles['solarAnnualCard']}>
                                 <h3>Annual Solar Radiation</h3>
                                 <p>{solarData.outputs.solrad_annual.toFixed(2)} kWh/m²/day</p>
                             </div>
                         </div>
-                        <div className={styles.poaChart}>
-                            <div className={styles.chartContainer}>
+                        <div className={styles['poaChart']}>
+                            <div className={styles['chartContainer']}>
                                 <ResponsiveContainer width="100%" height={300}>
                                     <BarChart data={poaMonthlyData} margin={{top: 5, right: 30, left: 20, bottom: 5}}>
                                         <CartesianGrid strokeDasharray="3 3"/>
@@ -219,7 +238,7 @@ const DetailedReport = () => {
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
-                            <div className={styles.poaAnnualCard}>
+                            <div className={styles['poaAnnualCard']}>
                                 <h3>Annual Plane of Array Irradiance</h3>
                                 <p>{solarData.outputs.poa_monthly.reduce((acc, value) => acc + value, 0).toFixed(2)} kWh/m²</p>
                             </div>
@@ -227,6 +246,18 @@ const DetailedReport = () => {
                     </>
                 )}
             </div>
+            {isModalOpen && (
+                <div className={styles['modalOverlay']}>
+                    <div className={styles['modal']}>
+                        <h3>Are you sure you want to delete this report?</h3>
+                        <div className={styles['modalButtons']}>
+                            <button className={styles['cancelButton']} onClick={() => setIsModalOpen(false)}>Cancel
+                            </button>
+                            <button className={styles['deleteButton']} onClick={handleDelete}>Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
