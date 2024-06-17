@@ -4,6 +4,35 @@
     padding-top: 20px;
     padding-bottom: 20px;
     align-items: center;
+    margin: 0 25px;
+}
+
+.navigation .links {
+    display: flex;
+    gap: 15px;
+}
+
+.navigation .links a {
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 2px solid #333333;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #333333;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navigation .links a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.navigation .links a.disabled {
+    background-color: #ccc;
+    color: #777;
+    cursor: not-allowed;
+    border: 2px solid #ccc;
 }
 
 .logout {
@@ -15,5 +44,20 @@
 }
 
 .logout:hover {
-    filter: brightness(90%);
+    filter: brightness(70%);
+}
+
+
+.navigation .user-info {
+    display: flex;
+    align-items: center;
+}
+
+.navigation .user-info span {
+    margin-right: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 10px;
+    background-color: #f0f0f0;
 }
