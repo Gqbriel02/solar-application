@@ -14,12 +14,13 @@ import {signUp} from '../../../services/AuthService';
 import {useNavigate} from "react-router-dom";
 import {doc, setDoc} from "firebase/firestore";
 import {auth, db} from '../../../config/Firebase';
+import Error from '../../Error/Error';
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
+            <Link color="inherit">
                 SOLAR
             </Link>{' '}
             {new Date().getFullYear()}
@@ -65,7 +66,7 @@ function Register() {
             setError("Passwords don't match.");
             return;
         }
-        
+
         try {
             await signUp(userCredentials, setError);
             const user = auth.currentUser;
@@ -174,13 +175,7 @@ function Register() {
                         Sign Up
                     </Button>
 
-
-                    {
-                        error &&
-                        <div className="error">
-                            {error}
-                        </div>
-                    }
+                    <Error errorMessage={error}/>
 
                     <Grid container justifyContent="flex-end">
                         <Grid item>
