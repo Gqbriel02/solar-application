@@ -9,9 +9,17 @@ import {AuthContext} from './context/AuthContext';
 import Content from "./components/Content/Content";
 import Reports from "./components/Reports/Reports";
 import DetailedReport from './components/Reports/DetailedReport/DetailedReport';
+import AboutUs from './components/AboutUs/AboutUs';
+import Contact from './components/Contact/Contact';
+import Loading from "./components/Loading/Loading";
 
 function App() {
-    const {isAuthenticated} = useContext(AuthContext);
+    const {isAuthenticated, loading} = useContext(AuthContext);
+
+    if (loading) {
+        return <Loading/>;
+    }
+
     return (
         <>
             {isAuthenticated && <Navbar/>}
@@ -32,6 +40,14 @@ function App() {
                         element={isAuthenticated ? <Reports/> : <Navigate to="/login"/>}
                     />
                     <Route path="/reports/:id" element={isAuthenticated ? <DetailedReport/> : <Navigate to="/login"/>}/>
+                    <Route
+                        path="/about-us"
+                        element={isAuthenticated ? <AboutUs/> : <Navigate to="/login"/>}
+                    />
+                    <Route
+                        path="/contact"
+                        element={isAuthenticated ? <Contact/> : <Navigate to="/login"/>}
+                    />
                 </Route>
             </Routes>
 
