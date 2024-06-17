@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {weatherApiKey} from '../config/ApiKeys';
 
-
 const API_URL = 'https://developer.nrel.gov/api/pvwatts/v8.json';
 
 interface PvwattsParams {
@@ -33,10 +32,19 @@ export interface PvwattsResponse {
     };
 }
 
+const getDataset = (lat: number, lon: number): string => {
+    // Simple check for USA (latitude between roughly 24 and 50, longitude between roughly -125 and -66)
+    if (lat >= 24 && lat <= 50 && lon >= -125 && lon <= -66) {
+        return 'nsrdb';
+    } else {
+        return 'intl';
+    }
+};
 
 const getPvwattsData = async (params: PvwattsParams): Promise<PvwattsResponse> => {
     try {
-        console.log('API request parameters:', params);
+        const dataset = getDataset(params.lat, params.lon);
+        /*console.log('API request parameters:', params);*/
         const response = await axios.get(API_URL, {
             params: {
                 api_key: weatherApiKey,
@@ -48,10 +56,10 @@ const getPvwattsData = async (params: PvwattsParams): Promise<PvwattsResponse> =
                 azimuth: params.azimuth,
                 lat: params.lat,
                 lon: params.lon,
-                dataset: 'intl'
+                dataset: dataset
             },
         });
-        console.log('data din api: ', response.data);
+        /*console.log('data din api: ', response.data);*/
         return response.data;
     } catch (error) {
         throw new Error('Error fetching data from PVWatts API');
