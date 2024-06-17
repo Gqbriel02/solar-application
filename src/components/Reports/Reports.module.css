@@ -1,9 +1,9 @@
-/* Reports.module.css */
 .container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
+    justify-content: center;
 }
 
 .card {
@@ -13,8 +13,20 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
+    /*min-width: 200px;*/
+    max-width: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .card:hover {
     transform: scale(1.05);
+}
+
+.no-reports {
+    font-size: 18px;
+    color: #666666;
+    text-align: center;
 }

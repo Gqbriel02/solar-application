@@ -2,6 +2,7 @@ import React from "react";
 import {GoogleMap, Marker, useJsApiLoader} from "@react-google-maps/api";
 import {googleMapsKey} from "../../config/ApiKeys";
 import styles from "./MapComponent.module.css";
+import Loading from "../Loading/Loading";
 
 type MapData = {
     lat: number
@@ -33,20 +34,20 @@ const MapComponent: React.FC<MapDataProps> = ({lat, lng, updateFields, updateMar
     };
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <Loading/>
     }
 
     return (
         <>
-            <div className={styles['header']}>Resource Data</div>
-            <div>Please put a marker on the map where you would like your panels.</div>
+            <h2 className={styles['header']}>Resource Data</h2>
+            <p>Please put a marker on the map where you would like your panels.</p>
 
             {isLoaded && (
 
                 <GoogleMap
                     mapContainerStyle={{width: "100%", height: "400px"}}
                     zoom={4}
-                    center={{lat: 44.85, lng: 24.86667}}
+                    center={{lat: lat || 44.85, lng: lng || 24.86667}}
                     onClick={handleMapClick}
                 >
                     {/*{markerPosition && <Marker position={markerPosition} draggable/>}*/}

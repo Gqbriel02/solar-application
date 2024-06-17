@@ -4,6 +4,7 @@ import {collection, query, where, getDocs} from 'firebase/firestore';
 import {useNavigate} from 'react-router-dom';
 import {useAuthState} from 'react-firebase-hooks/auth';
 import styles from './Reports.module.css';
+import Loading from '../Loading/Loading';
 
 interface SolarDataSummary {
     id: string;
@@ -14,6 +15,7 @@ const Reports = () => {
     const [solarDataSummaries, setSolarDataSummaries] = useState<SolarDataSummary[]>([]);
     const [user] = useAuthState(auth);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,19 +28,28 @@ const Reports = () => {
                     location: doc.data().location
                 }));
                 setSolarDataSummaries(dataList);
+                setLoading(false);
             }
         };
 
         fetchData();
     }, [user]);
 
+    if (loading) {
+        return <Loading/>;
+    }
+
     return (
-        <div className={styles.container}>
-            {solarDataSummaries.map((data) => (
-                <div key={data.id} className={styles.card} onClick={() => navigate(`/reports/${data.id}`)}>
-                    <p>{data.location}</p>
-                </div>
-            ))}
+        <div className={styles['container']}>
+            {solarDataSummaries.length > 0 ? (
+                solarDataSummaries.map((data) => (
+                    <div key={data.id} className={styles['card']} onClick={() => navigate(`/reports/${data.id}`)}>
+                        <p>{data.location}</p>
+                    </div>
+                ))
+            ) : (
+                <p className={styles['no-reports']}>You don't have any reports yet.</p>
+            )}
         </div>
     );
 };
