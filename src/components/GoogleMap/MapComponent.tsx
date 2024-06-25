@@ -15,19 +15,15 @@ type MapDataProps = MapData & {
 }
 
 const MapComponent: React.FC<MapDataProps> = ({lat, lng, updateFields, updateMarkerPosition}) => {
-    /*const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);*/
 
     const {isLoaded} = useJsApiLoader({
         googleMapsApiKey: googleMapsKey
     });
 
     const handleMapClick = (event: google.maps.MapMouseEvent) => {
-        /*console.log("Map clicked:", event.latLng);*/
         if (event.latLng) {
             const lat = event.latLng.lat();
             const lng = event.latLng.lng();
-            /*  console.log("Latitude: ", lat);
-                console.log("Longitude: ", lng);*/
             updateMarkerPosition({lat, lng});
             updateFields({lat, lng});
         }
@@ -50,7 +46,6 @@ const MapComponent: React.FC<MapDataProps> = ({lat, lng, updateFields, updateMar
                     center={{lat: lat || 44.85, lng: lng || 24.86667}}
                     onClick={handleMapClick}
                 >
-                    {/*{markerPosition && <Marker position={markerPosition} draggable/>}*/}
                     {lat && lng && <Marker position={{lat, lng}} draggable/>}
                 </GoogleMap>
             )}
