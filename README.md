@@ -1,46 +1,97 @@
-# Getting Started with Create React App
+# Solar Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web platform for analyzing and optimizing photovoltaic (PV) systems to enhance their efficiency and performance.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Introduction](#introduction)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## Introduction
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+In the current context of increasing environmental concerns and the need for sustainable energy resources, solar energy
+through photovoltaic systems offers a viable and ecological solution for generating electricity. However, to maximize
+the benefits of this technology, precise analysis and efficient optimization strategies are essential.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The primary goal of this application is to improve the performance and efficiency of photovoltaic systems, thereby
+promoting the use of solar energy. It provides a comprehensive solution for analyzing and optimizing PV panels.
 
-### `npm test`
+## Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Performance Analysis and Monitoring**: Upload relevant data and receive detailed reports on energy production, solar
+  panel efficiency, and other critical metrics.
+- **Simulations and Forecasting**: Model different scenarios, analyze the impact of variables like weather conditions,
+  and predict long-term energy production.
+- **User-Friendly Interface**: Intuitive and easy-to-use interface accessible even to those without advanced technical
+  knowledge.
+- **Customization**: Personalize the PV system configurations based on specific needs and locations.
+- **Security**: Strong measures for protecting user data, including encryption and secure authentication.
+- **Reports and Graphical Visualization**: Access detailed reports and graphs illustrating the PV system's performance
+  over various time intervals.
 
-### `npm run build`
+## Technologies Used
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Frontend**: React, TypeScript, MUI (Material-UI)
+- **Backend**: Firebase (Firestore, Authentication, Hosting)
+- **APIs**: Google Maps API, PVWatts Calculator
+- **Others**: Axios for HTTP requests
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerequisites
 
-### `npm run eject`
+- Node.js and npm installed on your machine.
+- A Firebase project set up with Firestore and Authentication enabled.
+- API keys for Google Maps and PVWatts.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Steps
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Clone the Repository**
+   ```sh
+   git clone https://github.com/Gqbriel02/solar-application.git
+   cd solar-application
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. **Install Dependencies**
+   ```sh
+   npm install
+   ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3. **Set Up Environment Variables**
+   Create a `.env` file in the root directory and add your Firebase and API keys.
+   ```env
+   REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+   REACT_APP_FIREBASE_PROJECT_ID=your_firebase_project_id
+   REACT_APP_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+   REACT_APP_FIREBASE_APP_ID=your_firebase_app_id
+   REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+   REACT_APP_PVWATTS_API_KEY=your_pvwatts_api_key
+   ```
+
+4. **Run the Application**
+   ```sh
+   npm start
+   ```
+
+## Usage
+
+1. **Register and Log In**: Create an account or log in to access the platform.
+2. **Select Location**: Use the interactive map to pinpoint the exact location for the solar panels.
+3. **Configure System**: Enter technical specifications such as system capacity, module type, and other parameters.
+4. **Analyze Performance**: View the detailed performance metrics and reports generated by the platform.
+5. **Save and Review Reports**: Save the results and access them later from the Reports section.
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can learn more in
+the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
