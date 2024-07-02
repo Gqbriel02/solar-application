@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {FormWrapper} from "./FormWrapper";
 import styles from './SystemInfo.module.css';
 import Error from '../Error/Error';
@@ -32,6 +32,19 @@ const SystemInfo = forwardRef(({
         tilt: null,
         azimuth: null
     });
+
+    const arrayTypeChangedRef = useRef(false);
+
+    useEffect(() => {
+        if (!arrayTypeChangedRef.current) {
+            if (arrayType === 2 || arrayType === 3 || arrayType === 4) {
+                updateFields({tilt: 0});
+            } else if (arrayType === 0 || arrayType === 1) {
+                updateFields({tilt: 20});
+            }
+            arrayTypeChangedRef.current = true;
+        }
+    }, [arrayType, updateFields]);
 
     useImperativeHandle(ref, () => ({
         validate: () => {
@@ -90,7 +103,10 @@ const SystemInfo = forwardRef(({
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="arrayType">Array Type:</label>
                 <select className={styles['input']} id="arrayType" name="arrayType" value={arrayType}
-                        onChange={e => updateFields({arrayType: parseInt(e.target.value)})}>
+                        onChange={e => {
+                            arrayTypeChangedRef.current = false;
+                            updateFields({arrayType: parseInt(e.target.value)});
+                        }}>
                     <option value="0">Fixed open rack</option>
                     <option value="1">Fixed roof mounted</option>
                     <option value="2">1-axis tracking</option>
@@ -108,7 +124,8 @@ const SystemInfo = forwardRef(({
             <div className={styles['input-group']}>
                 <label className={styles['label']} htmlFor="tilt">Tilt (deg):</label>
                 <input className={styles['input']} type="number" id="tilt" name="tilt" value={tilt}
-                       onChange={e => updateFields({tilt: parseFloat(e.target.value)})}/>
+                       onChange={e => updateFields({tilt: parseFloat(e.target.value)})}
+                       disabled={arrayType === 2 || arrayType === 3 || arrayType === 4}/>
                 {errors.tilt && <Error errorMessage={errors.tilt}/>}
             </div>
             <div className={styles['input-group']}>

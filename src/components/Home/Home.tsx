@@ -28,7 +28,7 @@ const INITIAL_DATA: FormData = {
     moduleType: 0,
     arrayType: 0,
     systemLosses: 14,
-    tilt: 30,
+    tilt: 20,
     azimuth: 180,
 };
 
