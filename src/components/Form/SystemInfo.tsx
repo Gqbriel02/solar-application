@@ -93,9 +93,9 @@ const SystemInfo = forwardRef(({
                         onChange={e => updateFields({arrayType: parseInt(e.target.value)})}>
                     <option value="0">Fixed open rack</option>
                     <option value="1">Fixed roof mounted</option>
-                    <option value="2">1-axis</option>
+                    <option value="2">1-axis tracking</option>
                     <option value="3">1-axis backtracking</option>
-                    <option value="4">2-axis</option>
+                    <option value="4">2-axis tracking</option>
                 </select>
             </div>
             <div className={styles['input-group']}>
